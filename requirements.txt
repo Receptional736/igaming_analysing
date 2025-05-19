@@ -1,0 +1,13 @@
+pandas
+matplotlib 
+wordcloud
+nltk
+scikit-learn
+python-dotenv
+pydantic
+openai-agents
+sqlalchemy
+psycopg2
+playwright
+fastapi
+uvicorn
