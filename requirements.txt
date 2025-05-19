@@ -7,7 +7,7 @@ python-dotenv
 pydantic
 openai-agents
 sqlalchemy
-psycopg2
+psycopg2-binary
 playwright
 fastapi
 uvicorn
