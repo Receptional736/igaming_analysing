@@ -71,12 +71,13 @@ async def fetch_p_tags(url, extract_elements):
 
 async def webscrap():
 
+    print('55')
     brands_str = os.getenv('BRANDS', '')
     links_str  = os.getenv('LINKS', '')
-
+    print('links_str',links_str)
     brands = [b.strip() for b in brands_str.split(',') if b.strip()]
     links  = [u.strip() for u in links_str.split(',') if u.strip()]
-
+    print('linkssssssss',links)
 
 
     input_df = pd.DataFrame(data={

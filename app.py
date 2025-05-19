@@ -69,8 +69,9 @@ async def search(request: Crawl_request):
 
     try:
 
-        
+        print('scrape_before')
         all_df,brands, links = await webscrap()
+        print('scrape after')
         conn_string = os.getenv('SQL_CONNECTION') 
         engine = create_engine(conn_string)
 
