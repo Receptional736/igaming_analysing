@@ -77,6 +77,7 @@ async def search(request: Crawl_request):
         for i in range(len(all_df)):
             df = all_df[i]
             brand = brands[i]
+            print(link)
             link = links[i]
             df_upload(df,brand,link,engine)
 
