@@ -101,15 +101,15 @@ async def webscrap(brand:str, link:str):
             df = pd.DataFrame(tags_dic)
 
             df["date"] = date_str
-            all_dfs.append(df)
+            return df
             #df.to_csv(f"{brand}.csv", index=False)
 
         except Exception as e:
             print('2222')
             print(e)
-            continue
+            return None
     
-    return all_dfs
+    
 
 
 

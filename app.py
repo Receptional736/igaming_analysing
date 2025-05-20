@@ -90,13 +90,14 @@ async def search(request: Crawl_request):
     try:
 
         print('scrape_before')
-        all_df = await webscrap(request.brand,request.link)
-        print('scrape after')
-        conn_string = os.getenv('SQL_CONNECTION') 
-        engine = create_engine(conn_string)
+        df = await webscrap(request.brand,request.link)
+        if df:
+            print('scrape after')
+            conn_string = os.getenv('SQL_CONNECTION') 
+            engine = create_engine(conn_string)
 
-        df = all_df[0]
-        df_upload(df,request.brand,request.link,engine)
+            
+            df_upload(df,request.brand,request.link,engine)
 
     
 
