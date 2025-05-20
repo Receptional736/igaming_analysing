@@ -110,10 +110,3 @@ async def webscrap(brand:str, link:str):
             return None
     
     
-
-
-
-if __name__ == '__main__':
-
-    all_df = webscrap()
-
