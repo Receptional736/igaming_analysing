@@ -4,7 +4,10 @@ from webscraping import webscrap
 from text_cleaning import clean_text
 import pandas as pd
 from datetime import datetime
-from sqlalchemy import create_engine
+from sqlalchemy import (
+    create_engine, MetaData, Table,
+    Column, BigInteger, Text, Date
+)
 import psycopg2
 from dotenv import load_dotenv
 import os
@@ -12,6 +15,7 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import uvicorn
 from pydantic import BaseModel
+import time
 load_dotenv(override=True)
 
 
@@ -21,7 +25,8 @@ CRAWL_BEARER_TOKEN = os.getenv("CRAWL_TOKEN_AUTH")
 
 
 class Crawl_request(BaseModel):
-    dummy:str
+    brand:str
+    link:str
 
 
 def df_upload(df,brands,link,engine):
@@ -43,7 +48,22 @@ def df_upload(df,brands,link,engine):
 
     })
 
-    cleaned_df.to_sql(f'{brands}', engine, if_exists='append', index=False) # keep old stuff 
+    base_ns = time.time_ns()
+    cleaned_df.insert(0, 'id', [base_ns + i for i in range(len(cleaned_df))])
+    # define the table with id as a primary key
+    metadata = MetaData()
+    table = Table(
+        brands, metadata,
+        Column('id', BigInteger, primary_key=True),
+        Column('tags', Text),
+        Column('text', Text),
+        Column('date', Date),
+        Column('link', Text),
+    )
+    metadata.create_all(engine)  # this will DROP/CREATE just once
+
+    # now append your rows without touching schema
+    cleaned_df.to_sql(brands, engine, if_exists='replace', index=False)
 
 
 
@@ -70,17 +90,13 @@ async def search(request: Crawl_request):
     try:
 
         print('scrape_before')
-        all_df,brands, links = await webscrap()
+        all_df = await webscrap(request.brand,request.link)
         print('scrape after')
         conn_string = os.getenv('SQL_CONNECTION') 
         engine = create_engine(conn_string)
 
-        for i in range(len(all_df)):
-            df = all_df[i]
-            brand = brands[i]
-            print(link)
-            link = links[i]
-            df_upload(df,brand,link,engine)
+        df = all_df[0]
+        df_upload(df,request.brand,request.link,engine)
 
     
 
