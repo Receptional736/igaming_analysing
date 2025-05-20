@@ -91,13 +91,17 @@ async def search(request: Crawl_request):
 
         print('scrape_before')
         df = await webscrap(request.brand,request.link)
-        if df:
+        if df is not None and not df.empty:
             print('scrape after')
-            conn_string = os.getenv('SQL_CONNECTION') 
+            conn_string = os.getenv('SQL_CONNECTION')
             engine = create_engine(conn_string)
-
-            
-            df_upload(df,request.brand,request.link,engine)
+            df_upload(df, request.brand, request.link, engine)
+        else:
+            # you could return 204 No Content, or raise a 404/400
+            raise HTTPException(
+                status_code=status.HTTP_204_NO_CONTENT,
+                detail="No data found for that link"
+    )
 
     
 
